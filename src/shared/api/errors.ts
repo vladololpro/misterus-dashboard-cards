@@ -1,27 +1,12 @@
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null
+
 export const getApiErrorMessage = (error: unknown, fallback: string): string => {
-  if (typeof error === 'string') {
-    if (error === 'Network Error' || error.includes('NetworkError')) return fallback
-    return error
-  }
+  if (!isRecord(error) || !('data' in error)) return fallback
 
-  if (typeof error === 'object' && error !== null) {
-    const err = error as Record<string, unknown>
+  const { data } = error
+  if (typeof data === 'string') return data
+  if (!isRecord(data) || !('error' in data)) return fallback
 
-    if (typeof err.error === 'string') {
-      if (err.error === 'Network Error' || err.error.includes('NetworkError')) return fallback
-      return err.error
-    }
-
-    if (typeof err.data === 'object' && err.data !== null) {
-      const data = err.data as Record<string, unknown>
-      if (typeof data.error === 'string') return data.error
-    }
-
-    if (typeof err.message === 'string') {
-      if (err.message === 'Network Error' || err.message.includes('NetworkError')) return fallback
-      return err.message
-    }
-  }
-
-  return fallback
+  return typeof data.error === 'string' ? data.error : fallback
 }

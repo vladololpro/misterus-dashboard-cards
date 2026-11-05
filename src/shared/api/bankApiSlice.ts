@@ -1,5 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { BaseQueryFn } from '@reduxjs/toolkit/query'
+import { isAxiosError } from 'axios'
 import { apiClient } from './client'
 import { Card, Operation, TransferPayload, TransferResult } from '../types'
 import { isCardArray, isOperationArray } from './guards'
@@ -26,11 +27,18 @@ const axiosBaseQuery = (): BaseQueryFn<AxiosQueryArgs, unknown, AxiosErrorData> 
       const data = await request<unknown>(args)
       return { data }
     } catch (axiosError) {
-      const err = axiosError as { response?: { status?: number; data?: unknown }; message: string }
+      if (isAxiosError(axiosError)) {
+        return {
+          error: {
+            status: axiosError.response?.status,
+            data: axiosError.response?.data ?? axiosError.message,
+          },
+        }
+      }
+
       return {
         error: {
-          status: err.response?.status,
-          data: err.response?.data || err.message,
+          data: axiosError instanceof Error ? axiosError.message : 'Unknown error',
         },
       }
     }

@@ -48,7 +48,8 @@ function QuickTransfer({ cards, activeCardId }: QuickTransferProps) {
     }
 
     if (!availableTargets.some((card) => card.id === targetCardId)) {
-      setTargetCardId(availableTargets[0]!.id)
+      const firstAvailableTarget = availableTargets[0]
+      setTargetCardId(firstAvailableTarget?.id ?? null)
     }
   }, [activeCard, availableTargets, targetCardId, setTargetCardId])
 
