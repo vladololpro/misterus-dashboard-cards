@@ -33,7 +33,13 @@ export default defineConfig([
     },
   },
   {
-    files: ['server/**/*.js', '*.config.js', 'vite.config.js'],
+    files: ['src/**/__tests__/**/*.{ts,tsx}'],
+    languageOptions: {
+      globals: globals.jest,
+    },
+  },
+  {
+    files: ['server/**/*.js', '*.config.js', '*.config.cjs', 'vite.config.js', 'playwright.config.ts', 'jest.setup.cjs'],
     languageOptions: {
       globals: globals.node,
     },
